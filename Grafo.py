@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import sys, os, re
+#import msvcrt 
+#import copy
+
+x = input('Informe o nome do arquivo a ser usado\n')
+arq = open(x, 'r')
+todas_linhas = arq.readlines() #string que contem todas as linhas do arquivo
+
 class Aresta:
     def __init__(self, origem, destino, rotulo):
         self.origem = origem
@@ -22,6 +30,34 @@ class Aresta:
 #    
 #    def getValor(self)
 #        return self.valor
+
+def menu_inicial():
+    clear()
+    print('Modulos:\n')
+    print('1 - Execucão Simples')
+    print('2 - Execucão Passo a Passo')
+
+    opcao_menu_inicial = str(input('Opcao: '))
+    if opcao_menu_inicial == '1':
+        execucao_simples()
+    elif opcao_menu_inicial == '2':
+        execucao_passo_a_passo()
+    else:
+        print('Opcao invalida')
+
+def execucao_simples():
+    print('Execucao simples')
+
+def execucao_passo_a_passo():
+    print('Execucao passo a passo')
+
+def clear():
+#    os.system("clear")
+    print (os.name)
+    if os.name == 'nt':
+        os.system("cls")
+    elif os.name == 'posix':
+        os.system("clear")
 
 class Grafo:
     def __init__(self, tamanho):
@@ -80,3 +116,8 @@ class Grafo:
 #temp.desmarcarNodo(2)
 #print(temp.verificarNodoMarcado(2))
 #print(temp.getArestaNodo(2))
+
+
+menu_inicial()
+
+arq.close()
