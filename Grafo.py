@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 
 class Aresta:
     def __init__(self, origem, destino, rotulo):
