@@ -4,9 +4,6 @@ import sys, os, re
 #import msvcrt 
 #import copy
 
-x = input('Informe o nome do arquivo a ser usado\n')
-arq = open(x, 'r')
-todas_linhas = arq.readlines() #string que contem todas as linhas do arquivo
 
 class Aresta:
     def __init__(self, origem, destino, rotulo):
@@ -31,33 +28,6 @@ class Aresta:
 #    def getValor(self)
 #        return self.valor
 
-def menu_inicial():
-    clear()
-    print('Modulos:\n')
-    print('1 - Execucão Simples')
-    print('2 - Execucão Passo a Passo')
-
-    opcao_menu_inicial = str(input('Opcao: '))
-    if opcao_menu_inicial == '1':
-        execucao_simples()
-    elif opcao_menu_inicial == '2':
-        execucao_passo_a_passo()
-    else:
-        print('Opcao invalida')
-
-def execucao_simples():
-    print('Execucao simples')
-
-def execucao_passo_a_passo():
-    print('Execucao passo a passo')
-
-def clear():
-#    os.system("clear")
-    print (os.name)
-    if os.name == 'nt':
-        os.system("cls")
-    elif os.name == 'posix':
-        os.system("clear")
 
 class Grafo:
     def __init__(self, tamanho):
@@ -104,6 +74,64 @@ class Grafo:
             for a in self.getArestaNodo(n):
                 sResposta = sResposta + "Aresta: " + str(a.getOrigem()) + " - " + str(a.getDestino()) + " = " + str(a.getRotulo()) + "\n"
         return sResposta
+
+
+#######################################################
+def le_arquivo():
+    if len(sys.argv) == 1:
+        nome_arq = input('Informe o nome do arquivo a ser usado\n')
+    else:
+        nome_arq= sys.argv[1]
+
+    with open(nome_arq, 'r') as arq:
+        todas_linhas = arq.readlines() #string que contem todas as linhas do arquivo
+    return todas_linhas
+
+
+#######################################################
+def preenche_grafo(conteudo_arq):
+    n_nos, n_arestas= ( int(x) for x in conteudo_arq[0].split())
+    grafo1= Grafo(n_nos)
+    
+    for i in range(n_arestas):
+        n1, n2, peso= ( int(x) for x in conteudo_arq[i+1].split())
+        grafo1.adicionarAresta(n1, n2, peso)
+
+    return grafo1
+
+
+#######################################################
+def menu_inicial():
+    clear()
+    print('Modulos:\n')
+    print('1 - Execucão Simples')
+    print('2 - Execucão Passo a Passo')
+
+    opcao_menu_inicial = str(input('Opcao: '))
+    if opcao_menu_inicial == '1':
+        execucao_simples()
+    elif opcao_menu_inicial == '2':
+        execucao_passo_a_passo()
+    else:
+        print('Opcao invalida')
+
+def execucao_simples():
+    print('Execucao simples')
+
+def execucao_passo_a_passo():
+    print('Execucao passo a passo')
+
+#######################################################
+def clear():
+#    os.system("clear")
+    print (os.name)
+    if os.name == 'nt':
+        os.system("cls")
+    elif os.name == 'posix':
+        os.system("clear")
+
+#######################################################
+
     
 #temp = Grafo(5)
 #temp.adicionarAresta(0,0,5)
@@ -117,7 +145,25 @@ class Grafo:
 #print(temp.verificarNodoMarcado(2))
 #print(temp.getArestaNodo(2))
 
+#######################################################
 
-menu_inicial()
+def script_entry():
+    linhas= le_arquivo()
+    grafo1= preenche_grafo(linhas)
+    print(grafo1.imprimir())
+    
+    origem, destino= (int(x) for x in input('Informe o nodo de origem e destino: ').split())
+        
+    arestas= grafo1.getArestaNodo(origem)
 
-arq.close()
+    nodos_vizinhos=[]
+    for a in arestas:
+        nodos_vizinhos.append(a.getDestino())
+#       print(a.getOrigem(), a.getDestino(), a.getRotulo())
+    print("nodos_vizinhos: ",nodos_vizinhos)
+
+    menu_inicial()
+
+
+script_entry()
+
