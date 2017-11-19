@@ -34,6 +34,7 @@ class Grafo:
         self.tamanho = tamanho
         #cria a matriz de adjacencia tamanho X tamanho
         self.matrizAdj = [[None for x in range(tamanho)] for y in range(tamanho)]
+        self.distancias= [(x, float('inf')) for x in range(tamanho)]
         self.marcados = []
     
     def adicionarAresta(self, origem, destino, rotulo):
@@ -68,6 +69,22 @@ class Grafo:
     def verificarNodoMarcado(self, nodo):
         return nodo in self.marcados
 
+    def todosNodosMarcados(self):
+        return len(self.marcados)==len(self.distancias)
+
+    def getDistancias(self):    #somente para debugs
+        return self.distancias
+
+    def getDistancia(self, nodo):
+        return self.distancias[nodo]
+
+    def setDistancia(self, nodo, dist):
+        self.distancias[nodo]= (nodo,dist)
+
+    def setOrigem(self, origem):
+        self.distancias= [(x, float('inf')) for x in range(tamanho)]
+        self.distancias[origem]= (origem, 0)
+    
     def imprimir(self):
         sResposta = ""
         for n in range(0, self.tamanho):
