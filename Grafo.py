@@ -167,19 +167,51 @@ def clear():
 def script_entry():
     linhas= le_arquivo()
     grafo1= preenche_grafo(linhas)
-    print(grafo1.imprimir())
+#    print(grafo1.imprimir())
     
+    menu_inicial()
+
     origem, destino= (int(x) for x in input('Informe o nodo de origem e destino: ').split())
         
     arestas= grafo1.getArestaNodo(origem)
 
-    nodos_vizinhos=[]
-    for a in arestas:
-        nodos_vizinhos.append(a.getDestino())
-#       print(a.getOrigem(), a.getDestino(), a.getRotulo())
-    print("nodos_vizinhos: ",nodos_vizinhos)
+    distancias= grafo1.getDistancias()
+    print(distancias)                  #valor inicial do array de tuplas
 
-    menu_inicial()
+    grafo1.setOrigem(origem)
+    
+    d_n_viz=[]
+    nodo=origem
+    while not grafo1.todosNodosMarcados():
+        if grafo1.verificarNodoMarcado(nodo):   #nodo já tratado, seleciona o próximo nodo
+            nodo= d_n_viz.pop(0)[0]
+            continue
+
+        grafo1.marcarNodo(nodo)
+
+        arestas= grafo1.getArestaNodo(nodo)
+
+        #verifica todos os vizinhos do respectivo nodo e atualiza o array de distancias
+        for a in arestas:
+            distanciaVizinho= (grafo1.getDistancia(a.getDestino()))  #seleciona a tupla do vizinho do nodo atual
+            dist_nodo= grafo1.getDistancia(a.getOrigem())[1]         #distancia da origem ate o nodo atual
+            peso_aresta= a.getRotulo()
+            dist_caminho= dist_nodo + peso_aresta                    #distancia da origem ate o vizinho, passando pelo nodo atual
+            dist_atual= distanciaVizinho[1]                          #distancia atual da origem ate o vizinho
+
+            distanciaVizinho= (distanciaVizinho[0], min(dist_atual, dist_caminho)) #atualiza distancia do vizinho com o menor caminho
+            grafo1.setDistancia(distanciaVizinho[0], distanciaVizinho[1])          #atualiza o array
+            d_n_viz.append(distanciaVizinho)
+
+        d_n_viz= sorted(d_n_viz, key=lambda d_n_viz: d_n_viz[1])     #ordena a lista com os nodos de forma crescente de distancia
+        nodo= d_n_viz.pop(0)[0]                                      #seleciona o proximo nodo a ser tratado, 
+                                                                     #sendo este o de menor caminho da lista
+        
+    distancias= grafo1.getDistancias()    #valor final do array de tuplas com as distancias em relacao a origem.
+    print(distancias)
+
+    print("Distancia de", origem, "a", destino, "=", grafo1.getDistancia(destino)[1])
+
 
 
 script_entry()
