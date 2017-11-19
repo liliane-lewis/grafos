@@ -180,7 +180,7 @@ def script_entry():
 
     grafo1.setOrigem(origem)
     
-    d_n_viz=[]
+    d_n_viz=[]                         #d_n_viz = distancia dos nodos vizinho
     nodo=origem
     while not grafo1.todosNodosMarcados():
         if grafo1.verificarNodoMarcado(nodo):   #nodo já tratado, seleciona o próximo nodo
