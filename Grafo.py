@@ -177,13 +177,14 @@ def script_entry():
 
     grafo1.setOrigem(origem)
     
-    d_n_viz=[]                         #d_n_viz = distancia dos nodos vizinho
+    d_n_viz=[]               #d_n_viz = distancia dos nodos vizinho: armazena tuplas do formato '(nodo, distancia_atual_em_relacao_a_origem)'
 
-    d_n_viz.append(grafo1.getDistancia(origem))             #d_n_viz = distancia dos nodos vizinho
+    d_n_viz.append(grafo1.getDistancia(origem))
     
 
     while d_n_viz:
-        nodo= d_n_viz.pop(0)[0]
+        nodo= d_n_viz.pop(0)[0]        #seleciona o primeiro nodo da lista ordenada por tamanho de caminho
+
         if grafo1.verificarNodoMarcado(nodo):   #nodo já tratado, seleciona o próximo nodo
             continue
 
@@ -206,7 +207,6 @@ def script_entry():
             d_n_viz.append(distanciaVizinho)
 
         d_n_viz= sorted(d_n_viz, key=lambda d_n_viz: d_n_viz[1])     #ordena a lista com os nodos de forma crescente de distancia
-                                                                     #sendo este o de menor caminho da lista
         
     distancias= grafo1.getDistancias()    #valor final do array de tuplas com as distancias em relacao a origem.
     print(distancias)
