@@ -69,9 +69,6 @@ class Grafo:
     def verificarNodoMarcado(self, nodo):
         return nodo in self.marcados
 
-    def todosNodosMarcados(self):
-        return len(self.marcados)==len(self.distancias)
-
     def getDistancias(self):    #somente para debugs
         return self.distancias
 
@@ -82,7 +79,7 @@ class Grafo:
         self.distancias[nodo]= (nodo,dist)
 
     def setOrigem(self, origem):
-        self.distancias= [(x, float('inf')) for x in range(tamanho)]
+        self.distancias= [(x, float('inf')) for x in range(self.tamanho)]
         self.distancias[origem]= (origem, 0)
     
     def imprimir(self):
@@ -173,7 +170,7 @@ def script_entry():
 
     origem, destino= (int(x) for x in input('Informe o nodo de origem e destino: ').split())
         
-    arestas= grafo1.getArestaNodo(origem)
+ #   arestas= grafo1.getArestaNodo(origem)
 
     distancias= grafo1.getDistancias()
     print(distancias)                  #valor inicial do array de tuplas
@@ -181,10 +178,13 @@ def script_entry():
     grafo1.setOrigem(origem)
     
     d_n_viz=[]                         #d_n_viz = distancia dos nodos vizinho
-    nodo=origem
-    while not grafo1.todosNodosMarcados():
+
+    d_n_viz.append(grafo1.getDistancia(origem))             #d_n_viz = distancia dos nodos vizinho
+    
+
+    while d_n_viz:
+        nodo= d_n_viz.pop(0)[0]
         if grafo1.verificarNodoMarcado(nodo):   #nodo já tratado, seleciona o próximo nodo
-            nodo= d_n_viz.pop(0)[0]
             continue
 
         grafo1.marcarNodo(nodo)
@@ -193,18 +193,19 @@ def script_entry():
 
         #verifica todos os vizinhos do respectivo nodo e atualiza o array de distancias
         for a in arestas:
+            if grafo1.verificarNodoMarcado(a.getDestino()):      #se essa aresta corresponde a um vizinho ja visitado, vai para o prox. vizinho
+                continue
             distanciaVizinho= (grafo1.getDistancia(a.getDestino()))  #seleciona a tupla do vizinho do nodo atual
             dist_nodo= grafo1.getDistancia(a.getOrigem())[1]         #distancia da origem ate o nodo atual
             peso_aresta= a.getRotulo()
             dist_caminho= dist_nodo + peso_aresta                    #distancia da origem ate o vizinho, passando pelo nodo atual
-            dist_atual= distanciaVizinho[1]                          #distancia atual da origem ate o vizinho
+            dist_atual= distanciaVizinho[1]  
 
             distanciaVizinho= (distanciaVizinho[0], min(dist_atual, dist_caminho)) #atualiza distancia do vizinho com o menor caminho
             grafo1.setDistancia(distanciaVizinho[0], distanciaVizinho[1])          #atualiza o array
             d_n_viz.append(distanciaVizinho)
 
         d_n_viz= sorted(d_n_viz, key=lambda d_n_viz: d_n_viz[1])     #ordena a lista com os nodos de forma crescente de distancia
-        nodo= d_n_viz.pop(0)[0]                                      #seleciona o proximo nodo a ser tratado, 
                                                                      #sendo este o de menor caminho da lista
         
     distancias= grafo1.getDistancias()    #valor final do array de tuplas com as distancias em relacao a origem.
