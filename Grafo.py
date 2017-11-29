@@ -37,6 +37,9 @@ class Grafo:
         self.distancias= [(x, float('inf')) for x in range(tamanho)]
         self.marcados = []
     
+    def getTamanho(self):
+       return self.tamanho    
+
     def adicionarAresta(self, origem, destino, rotulo):
         aresta1 = Aresta(origem, destino, rotulo)
         aresta2 = Aresta(destino, origem, rotulo)
@@ -109,13 +112,14 @@ def preenche_grafo(conteudo_arq):
     
     for i in range(n_arestas):
         n1, n2, peso= ( int(x) for x in conteudo_arq[i+1].split())
+        print( str(n1) + " " + str(n2))
         grafo1.adicionarAresta(n1, n2, peso)
 
     return grafo1
 
 
 #######################################################
-def menu_inicial():
+def menu_inicial(grafo):
     clear()
     print('Modulos:\n')
     print('1 - Execucão Simples')
@@ -123,17 +127,19 @@ def menu_inicial():
 
     opcao_menu_inicial = str(input('Opcao: '))
     if opcao_menu_inicial == '1':
-        execucao_simples()
+        execucao_simples(grafo)
     elif opcao_menu_inicial == '2':
-        execucao_passo_a_passo()
+        execucao_passo_a_passo(grafo)
     else:
         print('Opcao invalida')
 
-def execucao_simples():
-    print('Execucao simples')
+def execucao_simples(grafo):
+    dijkstra(grafo)
+    #print('Execucao simples')
 
-def execucao_passo_a_passo():
-    print('Execucao passo a passo')
+def execucao_passo_a_passo(grafo):
+    dijkstraPasso(grafo)
+    #print('Execucao passo a passo')
 
 #######################################################
 def clear():
@@ -166,15 +172,21 @@ def script_entry():
     grafo1= preenche_grafo(linhas)
 #    print(grafo1.imprimir())
     
-    menu_inicial()
+    menu_inicial(grafo1)
 
-    origem, destino= (int(x) for x in input('Informe o nodo de origem e destino: ').split())
+
         
  #   arestas= grafo1.getArestaNodo(origem)
 
     distancias= grafo1.getDistancias()
-    print(distancias)                  #valor inicial do array de tuplas
+   # print(distancias)                  #valor inicial do array de tuplas
 
+    
+
+def dijkstra(grafo):
+
+    grafo1 = grafo
+    origem, destino= (int(x) for x in input('Informe o nodo de origem e destino: ').split())
     grafo1.setOrigem(origem)
     
     d_n_viz=[]               #d_n_viz = distancia dos nodos vizinho: armazena tuplas do formato '(nodo, distancia_atual_em_relacao_a_origem)'
@@ -209,11 +221,62 @@ def script_entry():
         d_n_viz= sorted(d_n_viz, key=lambda d_n_viz: d_n_viz[1])     #ordena a lista com os nodos de forma crescente de distancia
         
     distancias= grafo1.getDistancias()    #valor final do array de tuplas com as distancias em relacao a origem.
-    print(distancias)
+    #print(distancias)
+    print("Distancia de", origem, "a", destino, "=", grafo1.getDistancia(destino)[1])
+    
 
+def dijkstraPasso(grafo):
+    grafo1 = grafo
+    origem, destino= (int(x) for x in input('Informe o nodo de origem e destino: ').split())
+    grafo1.setOrigem(origem)
+    
+    d_n_viz=[]               #d_n_viz = distancia dos nodos vizinho: armazena tuplas do formato '(nodo, distancia_atual_em_relacao_a_origem)'
+
+    d_n_viz.append(grafo1.getDistancia(origem))
+    
+
+    while d_n_viz:
+        nodo= d_n_viz.pop(0)[0]        #seleciona o primeiro nodo da lista ordenada por tamanho de caminho
+
+        if grafo1.verificarNodoMarcado(nodo):   #nodo já tratado, seleciona o próximo nodo
+            continue
+
+        grafo1.marcarNodo(nodo)
+
+        arestas= grafo1.getArestaNodo(nodo)
+
+        #verifica todos os vizinhos do respectivo nodo e atualiza o array de distancias
+        for a in arestas:
+            if grafo1.verificarNodoMarcado(a.getDestino()):      #se essa aresta corresponde a um vizinho ja visitado, vai para o prox. vizinho
+                continue
+            distanciaVizinho= (grafo1.getDistancia(a.getDestino()))  #seleciona a tupla do vizinho do nodo atual
+            dist_nodo= grafo1.getDistancia(a.getOrigem())[1]         #distancia da origem ate o nodo atual
+            peso_aresta= a.getRotulo()
+            dist_caminho= dist_nodo + peso_aresta                    #distancia da origem ate o vizinho, passando pelo nodo atual
+            dist_atual= distanciaVizinho[1]  
+
+            distanciaVizinho= (distanciaVizinho[0], min(dist_atual, dist_caminho)) #atualiza distancia do vizinho com o menor caminho
+            grafo1.setDistancia(distanciaVizinho[0], distanciaVizinho[1])          #atualiza o array
+            d_n_viz.append(distanciaVizinho)
+
+        d_n_viz= sorted(d_n_viz, key=lambda d_n_viz: d_n_viz[1])     #ordena a lista com os nodos de forma crescente de distancia
+        printDijkstra(grafo1, d_n_viz, nodo)  
+        input("Digite Qualquer tecla para continuar\n")      
+    distancias= grafo1.getDistancias()    #valor final do array de tuplas com as distancias em relacao a origem.
+    #print(distancias)
     print("Distancia de", origem, "a", destino, "=", grafo1.getDistancia(destino)[1])
 
-
+def printDijkstra(grafo, lista, nodo):
+    print("Nodo Atual: " + str(nodo))
+    print("Conjunto Fechado")
+    for n in range(grafo.getTamanho()) :
+        if grafo.verificarNodoMarcado(n):
+            print(str(n) + " " )              
+    print("\n")  
+    print("Conjunto Aberto")
+    for t in grafo.getDistancias():
+        print("Nodo: " + str(t[0]) +" distância: " + str(t[1])) 
+    print("\n")
 
 script_entry()
 
