@@ -232,7 +232,10 @@ def printDijkstra(grafo, lista, nodo):
     print(str_aberto)
 
     for t in grafo.getDistancias():
-        print("Nodo: " + str(t[0]) +" distância: " + str(t[1])) 
+        str_marcado=" "
+        if grafo.verificarNodoMarcado(t[0]):
+            str_marcado= "\tclosed."
+        print("Nodo: " + str(t[0]) +" distância: " + str(t[1])+ str_marcado) 
     print("\n")
 
 
